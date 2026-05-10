@@ -70,7 +70,7 @@ DOCUMENT:
 {text[:12000]}
 """
     msg = client.messages.create(
-        model="claude-sonnet-4-5",
+        model="claude-haiku-4-5-20251001",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -149,7 +149,7 @@ Verdict definitions:
 Respond ONLY with the raw JSON object — no markdown, no explanation outside JSON.
 """
     msg = client.messages.create(
-        model="claude-sonnet-4-5",
+        model="claude-haiku-4-5-20251001",
         max_tokens=500,
         messages=[{"role": "user", "content": prompt}]
     )
