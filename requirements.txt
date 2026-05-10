@@ -1,0 +1,5 @@
+pypdf
+anthropic
+requests
+beautifulsoup4
+duckduckgo-search
