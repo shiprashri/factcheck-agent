@@ -6,7 +6,6 @@ import time
 import anthropic
 import requests
 from bs4 import BeautifulSoup
-from duckduckgo_search import DDGS
 
 # ── Page config ──────────────────────────────────────────────────────────────
 st.set_page_config(
@@ -88,10 +87,26 @@ DOCUMENT:
 
 
 def web_search(query: str, max_results: int = 4) -> list[dict]:
-    """DuckDuckGo search returning list of {title, href, body}."""
+    """SerpAPI search returning list of {title, href, body}."""
     try:
-        with DDGS() as ddgs:
-            results = list(ddgs.text(query, max_results=max_results))
+        api_key = st.secrets.get("SERPAPI_KEY", "") if hasattr(st, "secrets") else os.environ.get("SERPAPI_KEY", "")
+        if not api_key:
+            return []
+        params = {
+            "q": query,
+            "api_key": api_key,
+            "num": max_results,
+            "engine": "google",
+        }
+        r = requests.get("https://serpapi.com/search", params=params, timeout=10)
+        data = r.json()
+        results = []
+        for item in data.get("organic_results", [])[:max_results]:
+            results.append({
+                "title": item.get("title", ""),
+                "href": item.get("link", ""),
+                "body": item.get("snippet", ""),
+            })
         return results
     except Exception:
         return []
