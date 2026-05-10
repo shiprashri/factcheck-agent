@@ -1,5 +1,5 @@
 import streamlit as st
-import fitz  # PyMuPDF
+from pypdf import PdfReader
 import json
 import re
 import time
@@ -49,10 +49,8 @@ st.divider()
 
 # ── Helpers ───────────────────────────────────────────────────────────────────
 def extract_text_from_pdf(uploaded_file) -> str:
-    pdf_bytes = uploaded_file.read()
-    doc = fitz.open(stream=pdf_bytes, filetype="pdf")
-    pages = [page.get_text() for page in doc]
-    return "\n".join(pages)
+    reader = PdfReader(uploaded_file)
+    return "\n".join(page.extract_text() or "" for page in reader.pages)
 
 
 def extract_claims(text: str, client: anthropic.Anthropic) -> list[dict]:
