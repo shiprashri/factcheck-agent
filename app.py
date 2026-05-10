@@ -70,7 +70,7 @@ DOCUMENT:
 {text[:12000]}
 """
     msg = client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-sonnet-4-5",
         max_tokens=2000,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -149,7 +149,7 @@ Verdict definitions:
 Respond ONLY with the raw JSON object — no markdown, no explanation outside JSON.
 """
     msg = client.messages.create(
-        model="claude-opus-4-5",
+        model="claude-sonnet-4-5",
         max_tokens=500,
         messages=[{"role": "user", "content": prompt}]
     )
@@ -210,10 +210,18 @@ def render_claim_card(r: dict):
 
 
 # ── Sidebar: API key ──────────────────────────────────────────────────────────
+import os
+
 with st.sidebar:
     st.markdown("### ⚙️ Configuration")
-    api_key = st.text_input("Anthropic API Key", type="password",
-                            help="Your key stays in session memory only.")
+    # Use Streamlit secrets (deployed) or env var or manual input
+    default_key = st.secrets.get("ANTHROPIC_API_KEY", "") if hasattr(st, "secrets") else os.environ.get("ANTHROPIC_API_KEY", "")
+    if default_key:
+        api_key = default_key
+        st.success("✅ API key loaded from environment")
+    else:
+        api_key = st.text_input("Anthropic API Key", type="password",
+                                help="Enter your Anthropic API key")
     st.markdown("---")
     st.markdown("**How it works:**\n1. Upload PDF\n2. Claude extracts claims\n3. DuckDuckGo searches each claim\n4. Claude verdicts each claim\n5. Report shown")
 
